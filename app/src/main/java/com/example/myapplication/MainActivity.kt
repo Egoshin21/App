@@ -2,8 +2,11 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
+import org.mariuszgromada.math.mxparser.Expression
 import java.lang.Exception
+import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,10 +18,10 @@ class MainActivity : AppCompatActivity() {
              output.text = ""
          }
 
-        button_brecket_left.setOnClickListener {
+        button_left.setOnClickListener {
             input.text = addToInputText( "(")
         }
-        button_brecket_right.setOnClickListener {
+        button_right.setOnClickListener {
             input.text = addToInputText(")")
         }
         button_0.setOnClickListener {
@@ -61,34 +64,58 @@ class MainActivity : AppCompatActivity() {
             input.text = addToInputText("9")
         }
 
-        button_dot.setOnClickListener {
-            input.text = addToInputText(",")
+        button_zap.setOnClickListener {
+            input.text = addToInputText(".")
         }
 
-        button_division.setOnClickListener {
+        button_delenie.setOnClickListener {
             input.text = addToInputText("÷")
         }
 
-        button_multiply.setOnClickListener {
+        button_ymnoz.setOnClickListener {
             input.text = addToInputText("×")
         }
 
-        button_subtraction.setOnClickListener {
+        button_minus.setOnClickListener {
             input.text = addToInputText("-")
         }
 
-        button_addition.setOnClickListener {
+        button_plus.setOnClickListener {
             input.text = addToInputText("+")
         }
 
 
-        button_equals.setOnClickListener {
-            input.text = addToInputText("=")
+        button_ravno.setOnClickListener {
+            showResult()
         }
 
     }
 
     private fun addToInputText(buttonValue: String): String {
         return "${input.text}$buttonValue"
+    }
+
+    private fun getInputExpression(): String {
+        var expression = input.text.replace(Regex("÷"), "/")
+        expression = expression.replace(Regex("×"), "*")
+        return  expression
+    }
+
+    private  fun showResult() {
+        try {
+            val expression = getInputExpression()
+            val  result = Expression(expression).calculate()
+            if (result.isNaN()) {
+                output.text = "Error"
+                output.setTextColor(ContextCompat.getColor( this, R.color.cardview_dark_background))
+            } else {
+                output.text = DecimalFormat("0.######").format(result).toString()
+                output.setTextColor(ContextCompat.getColor( this, R.color.cardview_light_background))
+            }
+        } catch (e: Exception) {
+            output.text = "Error"
+            output.setTextColor(ContextCompat.getColor(this, R.color.cardview_shadow_end_color))
+
+        }
     }
 }
